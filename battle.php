@@ -1,6 +1,7 @@
 <?php
 
 require __DIR__ . '/functions.php';
+require __DIR__.'/lib/Battle.php';
 
 $ships = get_ships();
 
@@ -27,7 +28,12 @@ if ($ship1Quantity <= 0 || $ship2Quantity <= 0) {
 $ship1 = $ships[$ship1Name];
 $ship2 = $ships[$ship2Name];
 
-$outcome = battle($ship1, $ship1Quantity, $ship2, $ship2Quantity);
+$battle = new Battle($ship1, $ship1Quantity, $ship2, $ship2Quantity);
+
+$result = $battle->battle();
+$winningShip = $battle->getWinningShip();
+$losingShip = $battle->getLosingShip();
+$usedJediPowers = $battle->getUsedJediPowers();  
 ?>
 
 <html lang="ru">
@@ -61,12 +67,12 @@ $outcome = battle($ship1, $ship1Quantity, $ship2, $ship2Quantity);
             <br>
             <?php
             echo $ship1Quantity; ?> <?php
-            echo $ship1['name']; ?><?php
+            echo $ship1->getName(); ?><?php
             echo $ship1Quantity > 1 ? 's' : ''; ?>
             VS.
             <?php
             echo $ship2Quantity; ?> <?php
-            echo $ship2['name']; ?><?php
+            echo $ship2->getName(); ?><?php
             echo $ship2Quantity > 1 ? 's' : ''; ?>
         </p>
     </div>
@@ -74,9 +80,9 @@ $outcome = battle($ship1, $ship1Quantity, $ship2, $ship2Quantity);
         <h3 class="text-center audiowide">
             Winner:
             <?php
-            if ($outcome['winning_ship']): ?>
+            if ($winningShip): ?>
                 <?php
-                echo $outcome['winning_ship']['name']; ?>
+                echo $winningShip->getName(); ?>
             <?php
             else: ?>
                 Ничья
@@ -85,27 +91,26 @@ $outcome = battle($ship1, $ship1Quantity, $ship2, $ship2Quantity);
         </h3>
         <p class="text-center">
             <?php
-            if ($outcome['winning_ship'] == null): ?>
-
+            if ($winningShip == null): ?>
                 Корабли уничтожили друг друга в эпической битве.
             <?php
             else: ?>
                 The <?php
-                echo $outcome['winning_ship']['name']; ?>
+                echo $winningShip->getName(); ?>
                 <?php
-                if ($outcome['used_jedi_powers']): ?>
+                if ($usedJediPowers): ?>
                     использовал свои Силу Джедая для ошеломляющей победы!
                 <?php
                 else: ?>
                     одолели и уничтожили  <?php
-                    echo $outcome['losing_ship']['name'] ?>s
+                    echo $losingShip->getName(); ?>s
                 <?php
                 endif; ?>
             <?php
             endif; ?>
         </p>
     </div>
-    <a href="/index.php"><p class="text-center"><i class="fa fa-undo"></i> Снова в бой</p></a>
+    <a href="index.php"><p class="text-center"><i class="fa fa-undo"></i> Снова в бой</p></a>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>

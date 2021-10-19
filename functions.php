@@ -1,4 +1,5 @@
 <?php
+require __DIR__.'/lib/Ship.php';
 
 function get_ships(): array
 {

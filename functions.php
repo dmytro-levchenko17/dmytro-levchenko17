@@ -75,19 +75,27 @@ function battle(Ship $ship1, $ship1Quantity, Ship $ship2, $ship2Quantity): Battl
         $winningShip = null;
         $losingShip = null;
         $isJediPowerUsed = $ship1UsedJediPowers || $ship2UsedJediPowers;
+        $winningShipHealth = null;
+        $losingShipHealth = null;
     } elseif ($ship1Health <= 0) {
         $winningShip = $ship2;
         $losingShip = $ship1;
         $isJediPowerUsed = $ship2UsedJediPowers;
+        $winningShipHealth = $ship2Health;
+        $losingShipHealth = $ship1Health;
     } else {
         $winningShip = $ship1;
         $losingShip = $ship2;
         $isJediPowerUsed = $ship1UsedJediPowers;
+        $winningShipHealth = $ship1Health;
+        $losingShipHealth = $ship2Health;
     }
 
     return new BattleResult(
         $winningShip,
         $losingShip,
+        $winningShipHealth,
+        $losingShipHealth,
         $isJediPowerUsed
     );
 }

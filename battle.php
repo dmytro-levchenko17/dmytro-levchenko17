@@ -103,6 +103,23 @@ $outcome = battle($ship1, $ship1Quantity, $ship2, $ship2Quantity);
             <?php
             endif; ?>
         </p>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <p>Осталось HP после битвы:</p>
+            </div>
+            <?php if ($outcome->getWinningShip() == null): ?>
+                <div class="col-md-12 text-center">
+                    <p>У обоих кораблей не осталось HP</p>
+                </div>
+             <?php else: ?>
+                <div class="col-md-6 text-center">
+                    <p><?php echo $outcome->getWinningShip()->getName(); ?> : <?php echo $outcome->getWinningShipHealth(); ?></p>
+                </div>
+                <div class="col-md-6 text-center">
+                    <p><?php echo $outcome->getLosingShip()->getName(); ?> : <?php echo $outcome->getLosingShipHealth(); ?></p>
+                </div>
+            <?php endif; ?>
+        </div>
     </div>
     <a href="index.php"><p class="text-center"><i class="fa fa-undo"></i> Снова в бой</p></a>
 

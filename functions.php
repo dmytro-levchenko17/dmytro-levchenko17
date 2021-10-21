@@ -1,5 +1,6 @@
 <?php
 require __DIR__.'/lib/Ship.php';
+require __DIR__.'/lib/BattleResult.php';
 
 function get_ships(): array
 {
@@ -45,7 +46,7 @@ function get_ships(): array
  * @param $ship2Quantity
  * @return array With keys winning_ship, losing_ship & used_jedi_powers
  */
-function battle(Ship $ship1, $ship1Quantity, Ship $ship2, $ship2Quantity): array
+function battle(Ship $ship1, $ship1Quantity, Ship $ship2, $ship2Quantity): BattleResult
 {
     $ship1Health = $ship1->getStrength() * $ship1Quantity;
     $ship2Health = $ship2->getStrength() * $ship2Quantity;
@@ -73,22 +74,22 @@ function battle(Ship $ship1, $ship1Quantity, Ship $ship2, $ship2Quantity): array
     if ($ship1Health <= 0 && $ship2Health <= 0) {
         $winningShip = null;
         $losingShip = null;
-        $usedJediPowers = $ship1UsedJediPowers || $ship2UsedJediPowers;
+        $isJediPowerUsed = $ship1UsedJediPowers || $ship2UsedJediPowers;
     } elseif ($ship1Health <= 0) {
         $winningShip = $ship2;
         $losingShip = $ship1;
-        $usedJediPowers = $ship2UsedJediPowers;
+        $isJediPowerUsed = $ship2UsedJediPowers;
     } else {
         $winningShip = $ship1;
         $losingShip = $ship2;
-        $usedJediPowers = $ship1UsedJediPowers;
+        $isJediPowerUsed = $ship1UsedJediPowers;
     }
 
-    return [
-        'winning_ship' => $winningShip,
-        'losing_ship' => $losingShip,
-        'used_jedi_powers' => $usedJediPowers,
-    ];
+    return new BattleResult(
+        $winningShip,
+        $losingShip,
+        $isJediPowerUsed
+    );
 }
 
 function isJediDestroyShipUsingTheForce(Ship $ship): bool

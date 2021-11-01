@@ -1,20 +1,20 @@
 <?php
+require __DIR__ . '/bootstrap.php';
 
-require __DIR__ . '/functions.php';
+$shipLoader = new ShipLoader($container->getPDO());
+$ships = $shipLoader->getShips();
 
-$ships = get_ships();
-
-$ship1Name = $_POST['ship1_name'] ?? null;
+$ship1Id = $_POST['ship1_id'] ?? null;
 $ship1Quantity = $_POST['ship1_quantity'] ?? 1;
-$ship2Name = $_POST['ship2_name'] ?? null;
+$ship2Id = $_POST['ship2_id'] ?? null;
 $ship2Quantity = $_POST['ship2_quantity'] ?? 1;
 
-if (!$ship1Name || !$ship2Name) {
+if (!$ship1Id || !$ship2Id) {
     header('Location: /index.php?error=missing_data');
     die;
 }
 
-if (!isset($ships[$ship1Name], $ships[$ship2Name])) {
+if (!isset($ships[$ship1Id], $ships[$ship2Id])) {
     header('Location: /index.php?error=bad_ships');
     die;
 }
@@ -24,10 +24,14 @@ if ($ship1Quantity <= 0 || $ship2Quantity <= 0) {
     die;
 }
 
-$ship1 = $ships[$ship1Name];
-$ship2 = $ships[$ship2Name];
+$ship1 = $shipLoader->find((int) $ship1Id);
+$ship2 = $shipLoader->find((int) $ship2Id);
 
-$outcome = battle($ship1, $ship1Quantity, $ship2, $ship2Quantity);
+$battleManager = new BattleManager();
+$outcome = $battleManager->battle($ship1, $ship1Quantity, $ship2, $ship2Quantity);
+
+$battleLoader = new BattleLoader($container->getPDO());
+$battleLoader->save($outcome);
 ?>
 
 <html lang="ru">
@@ -52,8 +56,11 @@ $outcome = battle($ship1, $ship1Quantity, $ship2, $ship2Quantity);
 </head>
 <body>
 <div class="container">
-    <div class="page-header">
+    <div class="page-header" style="display:flex;align-items: center; justify-content: flex-start;">
         <h1>Космическая битва</h1>
+        <li style="margin: 10px 0 0 40px; list-style: none;">
+            <a href="history.php">История битв</a>
+        </li>
     </div>
     <div>
         <h2 class="text-center">Столкновение:</h2>
@@ -96,8 +103,12 @@ $outcome = battle($ship1, $ship1Quantity, $ship2, $ship2Quantity);
                     использовал свои Силу Джедая для ошеломляющей победы!
                 <?php
                 else: ?>
-                    одолели и уничтожили  <?php
-                    echo $outcome->getLosingShip()->getName(); ?>s
+                    одолели и уничтожили  <?php 
+                    if ($outcome->getWinningShip()->getName() == $outcome->getShip1()->getName()) {
+                        echo $outcome->getShip2()->getName();
+                    } else {
+                        echo $outcome->getShip1()->getName(); 
+                    }?>s
                 <?php
                 endif; ?>
             <?php
@@ -113,10 +124,10 @@ $outcome = battle($ship1, $ship1Quantity, $ship2, $ship2Quantity);
                 </div>
              <?php else: ?>
                 <div class="col-md-6 text-center">
-                    <p><?php echo $outcome->getWinningShip()->getName(); ?> : <?php echo $outcome->getWinningShipHealth(); ?></p>
+                    <p><?php echo $outcome->getShip1()->getName(); ?> : <?php echo $outcome->getShip1HP(); ?></p>
                 </div>
                 <div class="col-md-6 text-center">
-                    <p><?php echo $outcome->getLosingShip()->getName(); ?> : <?php echo $outcome->getLosingShipHealth(); ?></p>
+                    <p><?php echo $outcome->getShip2()->getName(); ?> : <?php echo $outcome->getShip2HP(); ?></p>
                 </div>
             <?php endif; ?>
         </div>

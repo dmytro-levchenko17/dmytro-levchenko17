@@ -1,7 +1,9 @@
 <?php
-require __DIR__.'/functions.php';
+ini_set('display_errors', 'on');
+require __DIR__.'/bootstrap.php';
 
-$ships = get_ships();
+$shipLoader = $container->getShipLoader();
+$ships = $shipLoader->getShips();
 
 $errorMessage = '';
 if (isset($_GET['error'])) {
@@ -26,7 +28,7 @@ if (isset($_GET['error'])) {
         <meta charset="utf-8">
            <meta http-equiv="X-UA-Compatible" content="IE=edge">
            <meta name="viewport" content="width=device-width, initial-scale=1">
-           <title>Космическая битва1</title>
+           <title>Космическая битва</title>
 
            <!-- Bootstrap -->
            <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -49,8 +51,11 @@ if (isset($_GET['error'])) {
 
     <body>
         <div class="container">
-            <div class="page-header">
+            <div class="page-header" style="display:flex;align-items: center; justify-content: flex-start;">
                 <h1>Космическая битва</h1>
+                <li style="margin: 10px 0 0 40px; list-style: none;">
+                    <a href="history.php">История битв</a>
+                </li>
             </div>
             <table class="table table-hover">
                 <caption><i class="fa fa-rocket"></i> Корабли готовы к следующей Миссии</caption>
@@ -79,20 +84,20 @@ if (isset($_GET['error'])) {
                     <form method="POST" action="battle.php">
                         <h2 class="text-center">Миссия</h2>
                         <input class="center-block form-control text-field" type="text" name="ship1_quantity" placeholder="Enter Number of Ships" />
-                        <select class="center-block form-control btn drp-dwn-width btn-default dropdown-toggle" name="ship1_name">
+                        <select class="center-block form-control btn drp-dwn-width btn-default dropdown-toggle" name="ship1_id">
                             <option value="">Выберите корабль</option>
-                            <?php foreach ($ships as $key => $ship): ?>
-                                <option value="<?php echo $key; ?>"><?php echo $ship->getName(); ?></option>
+                            <?php foreach ($ships as $ship): ?>
+                                <option value="<?php echo $ship->getId(); ?>"><?php echo $ship->getName(); ?></option>
                             <?php endforeach; ?>
                         </select>
                         <br>
                         <p class="text-center">Противник</p>
                         <br>
                         <input class="center-block form-control text-field" type="text" name="ship2_quantity" placeholder="Enter Number of Ships" />
-                        <select class="center-block form-control btn drp-dwn-width btn-default dropdown-toggle" name="ship2_name">
+                        <select class="center-block form-control btn drp-dwn-width btn-default dropdown-toggle" name="ship2_id">
                             <option value="">Выберите корабль</option>
-                            <?php foreach ($ships as $key => $ship): ?>
-                                <option value="<?php echo $key; ?>"><?php echo $ship->getName(); ?></option>
+                            <?php foreach ($ships as $ship): ?>
+                                <option value="<?php echo $ship->getId(); ?>"><?php echo $ship->getName(); ?></option>
                             <?php endforeach; ?>
                         </select>
                         <br>

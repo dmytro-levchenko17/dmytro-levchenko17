@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/bootstrap.php';
 
-$shipLoader = new ShipLoader($container->getPDO());
+$shipLoader = new ShipLoader($container->getShipStorage());
 $ships = $shipLoader->getShips();
 
 $ship1Id = $_POST['ship1_id'] ?? null;
@@ -24,8 +24,8 @@ if ($ship1Quantity <= 0 || $ship2Quantity <= 0) {
     die;
 }
 
-$ship1 = $shipLoader->find((int) $ship1Id);
-$ship2 = $shipLoader->find((int) $ship2Id);
+$ship1 = $container->getShipStorage()->findOneById((int) $ship1Id);
+$ship2 = $container->getShipStorage()->findOneById((int) $ship2Id);
 
 $battleManager = new BattleManager();
 $outcome = $battleManager->battle($ship1, $ship1Quantity, $ship2, $ship2Quantity);

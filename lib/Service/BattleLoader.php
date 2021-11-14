@@ -2,9 +2,6 @@
 
 declare(strict_types=1);
 
-use Model\HistoryCollection;
-use Model\BattleHistory;
-
 class BattleLoader
 {
     public function __construct(PDO $pdo) {
@@ -30,7 +27,7 @@ class BattleLoader
         $statement->execute();
     }
 
-    public function getBattles(int $offset, int $limit): HistoryCollection
+    public function getBattles(int $offset, int $limit): array
     {
         $statement = $this->pdo->prepare("SELECT * FROM battle_history ORDER BY battle_date DESC LIMIT $offset, $limit");
         $statement->execute();
@@ -41,7 +38,7 @@ class BattleLoader
             $battles[] = $this->transformDataToShip($dbbattle);
         }
 
-        return new HistoryCollection($battles);
+        return $battles;
     }
 
     public function getBattlesCount(): string
